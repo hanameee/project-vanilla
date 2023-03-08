@@ -21,26 +21,33 @@ class Button {
     constructor($target) {
         this.target = $target;
         this.state = BUTTON_STATE_ENUM.START;
+        this.startTimeStamp = 0;
+        this.endTimeStamp = 0;
         this.render();
     }
 
     changeButtonState() {
         switch (this.state) {
             case BUTTON_STATE_ENUM.START:
-                this.state = BUTTON_STATE_ENUM.IN_PROGRESS
-                const randomTime = Math.random() * 10
-                console.info(`Button will change after ${randomTime.toFixed(2)}sec`)
+                this.state = BUTTON_STATE_ENUM.IN_PROGRESS;
+                const randomTime = Math.random() * 3;
+                console.info(`Button will change after ${randomTime.toFixed(2)}sec`);
+
                 setTimeout(() => {
+                    this.startTimeStamp = new Date().getTime();
                     this.state = BUTTON_STATE_ENUM.READY;
                     this.render();
                 }, randomTime * 1000)
-                this.render()
+
+                this.render();
                 break
             case BUTTON_STATE_ENUM.IN_PROGRESS:
-                alert("Too Soon! 😉")
+                alert("Too Soon! 😉");
                 break
             case BUTTON_STATE_ENUM.READY:
+                this.endTimeStamp = new Date().getTime();
                 this.state = BUTTON_STATE_ENUM.START;
+                new Record(this.endTimeStamp - this.startTimeStamp)
                 this.render()
                 break
         }
@@ -49,19 +56,27 @@ class Button {
     render() {
         const button = document.createElement("button");
         button.className = DEFAULT_BUTTON_STYLE + " " + STATE_BUTTON_STYLE[this.state];
-        button.id = "button"
-        button.innerText = BUTTON_STATE_LABEL[this.state]
-        button.addEventListener("click", () => this.changeButtonState())
+        button.id = "button";
+        button.innerText = BUTTON_STATE_LABEL[this.state];
+        button.addEventListener("click", () => this.changeButtonState());
 
-        this.target.replaceChildren(button)
+        this.target.replaceChildren(button);
 
+    }
+}
+
+class Record {
+    constructor(record) {
+        this.record = document.createElement("li");
+        this.record.innerText = `${record / 1000}sec`;
+        document.querySelector("#records").appendChild(this.record)
     }
 }
 
 class App {
     constructor($target) {
-        new Button($target)
+        new Button($target);
     }
 }
 
-new App(document.querySelector("#app"))
+new App(document.querySelector("#app"));
