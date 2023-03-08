@@ -47,15 +47,14 @@ class Button {
     }
 
     render() {
-        this.target.innerHTML = "";
-
         const button = document.createElement("button");
         button.className = DEFAULT_BUTTON_STYLE + " " + STATE_BUTTON_STYLE[this.state];
         button.id = "button"
         button.innerText = BUTTON_STATE_LABEL[this.state]
         button.addEventListener("click", () => this.changeButtonState())
 
-        this.target.appendChild(button)
+        this.target.replaceChildren(button)
+
     }
 }
 
