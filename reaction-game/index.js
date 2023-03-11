@@ -1,3 +1,5 @@
+const MAX_TIME = 3;
+
 const BUTTON_STATE_ENUM = {
     START: "START",
     IN_PROGRESS: "IN_PROGRESS",
@@ -20,35 +22,36 @@ const STATE_BUTTON_STYLE = {
 class Button {
     constructor($target) {
         this.target = $target;
-        this.state = BUTTON_STATE_ENUM.START;
         this.startTimeStamp = 0;
         this.endTimeStamp = 0;
-        this.render();
+        this.setState(BUTTON_STATE_ENUM.START);
+    }
+
+    setState(nextState) {
+        this.state = nextState
+        this.render()
     }
 
     changeButtonState() {
+
+
         switch (this.state) {
             case BUTTON_STATE_ENUM.START:
-                this.state = BUTTON_STATE_ENUM.IN_PROGRESS;
-                const randomTime = Math.random() * 3;
+                this.setState(BUTTON_STATE_ENUM.IN_PROGRESS);
+                const randomTime = Math.random() * MAX_TIME;
                 console.info(`Button will change after ${randomTime.toFixed(2)}sec`);
-
                 setTimeout(() => {
                     this.startTimeStamp = new Date().getTime();
-                    this.state = BUTTON_STATE_ENUM.READY;
-                    this.render();
+                    this.setState(BUTTON_STATE_ENUM.READY)
                 }, randomTime * 1000)
-
-                this.render();
                 break
             case BUTTON_STATE_ENUM.IN_PROGRESS:
                 alert("Too Soon! 😉");
                 break
             case BUTTON_STATE_ENUM.READY:
                 this.endTimeStamp = new Date().getTime();
-                this.state = BUTTON_STATE_ENUM.START;
+                this.setState(BUTTON_STATE_ENUM.START);
                 new Record(this.endTimeStamp - this.startTimeStamp)
-                this.render()
                 break
         }
     }
