@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <title>reaction game</title>
 </head>
 
 <body>
     <div id="app"
-        class="w-full max-w-md m-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mt-4 mb-4 flex justify-center"></div>
-    <div id="records" />
+        class="w-full max-w-md m-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mt-4 mb-4 flex justify-center">
+    </div>
+    <div class="flex flex-col justify-center items-center">
+        <h2 class="mb-2 text-xl font-semibold text-gray-700">Records 🏆</h2>
+        <ul class="max-w-md space-y-1 text-gray-700 list-disc list-inside" id="record-list"></ul>
     </div>
     <script type="module" src="./index.js"></script>
 </body>

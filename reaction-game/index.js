@@ -33,8 +33,6 @@ class Button {
     }
 
     changeButtonState() {
-
-
         switch (this.state) {
             case BUTTON_STATE_ENUM.START:
                 this.setState(BUTTON_STATE_ENUM.IN_PROGRESS);
@@ -62,9 +60,7 @@ class Button {
         button.id = "button";
         button.innerText = BUTTON_STATE_LABEL[this.state];
         button.addEventListener("click", () => this.changeButtonState());
-
         this.target.replaceChildren(button);
-
     }
 }
 
@@ -72,7 +68,7 @@ class Record {
     constructor(record) {
         this.record = document.createElement("li");
         this.record.innerText = `${record / 1000}sec`;
-        document.querySelector("#records").appendChild(this.record)
+        document.querySelector("#record-list").appendChild(this.record)
     }
 }
 
@@ -83,3 +79,7 @@ class App {
 }
 
 new App(document.querySelector("#app"));
+
+// TODO: mark winner among current record, or sort by ascending order
+// TODO: propmt current player's nickname
+// TODO: add timestamp information to record list
