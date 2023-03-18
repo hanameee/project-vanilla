@@ -19,6 +19,22 @@ let paddleX = (canvas.width - PADDLE_WIDTH) / 2;
 
 let keyboardDirection = "";
 
+const brickRowCount = 3;
+const brickColumnCount = 5;
+const BRICK_WIDTH = 75;
+const BRICK_HEIGHT = 20;
+const BRICK_PADDING = 10;
+const BRICK_OFFSET_TOP = 30;
+const BRICK_OFFSET_LEFT = 30;
+
+const bricks = [];
+for (let c = 0; c < brickColumnCount; c++) {
+    bricks[c] = [];
+    for (let r = 0; r < brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0 };
+    }
+}
+
 function getRandomColor() {
     return `#${Math.round(Math.random() * 0xffffff).toString(16)}`;
 }
@@ -31,7 +47,7 @@ function drawBall() {
     ctx.closePath();
 }
 
-function resetBall() {
+function reset() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -42,11 +58,26 @@ function drawPaddle() {
     ctx.closePath();
 }
 
+function drawBricks() {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            const brickX = c * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
+            const brickY = r * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
+
 function draw() {
-    resetBall();
+    reset();
     drawBall();
     drawPaddle();
-
+    drawBricks();
     const newX = x + dx;
     const newY = y + dy;
 
@@ -64,7 +95,7 @@ function draw() {
         if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
             dy = -dy;
             clearInterval(interval);
-            TIMEOUT = Math.max(1, TIMEOUT - 1);
+            TIMEOUT = Math.max(1, TIMEOUT - 0.5);
             interval = setInterval(draw, TIMEOUT);
             // otherwise
         } else {
