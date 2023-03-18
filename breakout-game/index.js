@@ -15,6 +15,8 @@ const PADDLE_HEIGHT = 10;
 const PADDLE_WIDTH = 75;
 let paddleX = (canvas.width - PADDLE_WIDTH) / 2;
 
+let keyboardDirection = "";
+
 function getRandomColor() {
     return `#${Math.round(Math.random() * 0xffffff).toString(16)}`;
 }
@@ -34,7 +36,6 @@ function resetBall() {
 function drawPaddle() {
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
-    ctx.fillStyle = "white";
     ctx.fill();
     ctx.closePath();
 }
@@ -43,18 +44,55 @@ function draw() {
     resetBall();
     drawBall();
     drawPaddle();
-    const NEW_X = x + dx;
-    const NEW_Y = y + dy;
-    if (NEW_X < BALL_RADIUS || NEW_X > canvas.width - BALL_RADIUS) {
+
+    const newX = x + dx;
+    const newY = y + dy;
+
+    // detect if ball hit the wall
+    if (newX < BALL_RADIUS || newX > canvas.width - BALL_RADIUS) {
         dx = -dx;
         BALL_COLOR = getRandomColor();
     }
-    if (NEW_Y < BALL_RADIUS || NEW_Y > canvas.height - BALL_RADIUS) {
+    if (newY < BALL_RADIUS || newY > canvas.height - BALL_RADIUS) {
         dy = -dy;
         BALL_COLOR = getRandomColor();
     }
+    // move the ball
     x += dx;
     y += dy;
+
+    // make sure paddle is kept inside canvas
+    if (keyboardDirection === "right") {
+        paddleX = Math.min(paddleX + 7, canvas.width - PADDLE_WIDTH);
+    }
+    if (keyboardDirection === "left") {
+        paddleX = Math.max(paddleX - 7, 0);
+    }
 }
 
+
+function keyDownHandler(e) {
+    if (e.key === "Right" || e.key === "ArrowRight") {
+        keyboardDirection = "right";
+        return;
+    }
+    if (e.key === "Left" || e.key === "ArrowLeft") {
+        keyboardDirection = "left";
+        return;
+    }
+}
+
+function keyUpHandler(e) {
+    if (e.key === "Right" || e.key === "ArrowRight") {
+        keyboardDirection = keyboardDirection === "right" && "";
+        return;
+    }
+    if (e.key === "Left" || e.key === "ArrowLeft") {
+        keyboardDirection = keyboardDirection === "left" && "";
+        return;
+    }
+}
+
+document.addEventListener("keydown", keyDownHandler);
+document.addEventListener("keyup", keyUpHandler);
 setInterval(draw, 10);
