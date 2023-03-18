@@ -31,7 +31,7 @@ const bricks = [];
 for (let c = 0; c < brickColumnCount; c++) {
     bricks[c] = [];
     for (let r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+        bricks[c][r] = { x: 0, y: 0, isAvailable: true };
     }
 }
 
@@ -61,30 +61,47 @@ function drawPaddle() {
 function drawBricks() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-            const brickX = c * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
-            const brickY = r * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
-            ctx.fill();
-            ctx.closePath();
+            const currentBrick = bricks[c][r];
+            if (currentBrick.isAvailable) {
+                const brickX = c * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
+                const brickY = r * (BRICK_HEIGHT + BRICK_PADDING) + BRICK_OFFSET_TOP;
+                currentBrick.x = brickX;
+                currentBrick.y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT);
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}
+
+function collisionDetection() {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            const currentBrick = bricks[c][r];
+            if (currentBrick.isAvailable) {
+                if (x > currentBrick.x && x < currentBrick.x + BRICK_WIDTH && y > currentBrick.y && y < currentBrick.y + BRICK_HEIGHT) {
+                    dy = -dy;
+                    BALL_COLOR = getRandomColor();
+                    currentBrick.isAvailable = false;
+                }
+            }
         }
     }
 }
 
 function draw() {
     reset();
+    collisionDetection();
     drawBall();
     drawPaddle();
     drawBricks();
     const newX = x + dx;
     const newY = y + dy;
-
     // detect if ball hit the wall
     if (newX < BALL_RADIUS || newX > canvas.width - BALL_RADIUS) {
         dx = -dx;
-        BALL_COLOR = getRandomColor();
     }
     if (newY < BALL_RADIUS) {
         dy = -dy;
@@ -95,7 +112,7 @@ function draw() {
         if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
             dy = -dy;
             clearInterval(interval);
-            TIMEOUT = Math.max(1, TIMEOUT - 0.5);
+            TIMEOUT = Math.max(1, TIMEOUT - 0.2);
             interval = setInterval(draw, TIMEOUT);
             // otherwise
         } else {
