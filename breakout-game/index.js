@@ -3,6 +3,8 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
+let TIMEOUT = 10;
+
 const BALL_RADIUS = 10;
 let BALL_COLOR = "#0095DD";
 let x = canvas.width / 2;
@@ -58,8 +60,13 @@ function draw() {
         BALL_COLOR = getRandomColor();
         // ball hit the bottom
     } else if (newY > canvas.height - BALL_RADIUS) {
+        // ball hit the paddle
         if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
             dy = -dy;
+            clearInterval(interval);
+            TIMEOUT = Math.max(1, TIMEOUT - 1);
+            interval = setInterval(draw, TIMEOUT);
+            // otherwise
         } else {
             alert("GAME OVER!😉");
             document.location.reload();
@@ -106,4 +113,4 @@ function keyUpHandler(e) {
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
 
-const interval = setInterval(draw, 10);
+let interval = setInterval(draw, TIMEOUT);
