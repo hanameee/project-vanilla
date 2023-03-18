@@ -53,10 +53,20 @@ function draw() {
         dx = -dx;
         BALL_COLOR = getRandomColor();
     }
-    if (newY < BALL_RADIUS || newY > canvas.height - BALL_RADIUS) {
+    if (newY < BALL_RADIUS) {
         dy = -dy;
         BALL_COLOR = getRandomColor();
+        // ball hit the bottom
+    } else if (newY > canvas.height - BALL_RADIUS) {
+        if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
+            dy = -dy;
+        } else {
+            alert("GAME OVER!😉");
+            document.location.reload();
+            clearInterval(interval);
+        }
     }
+
     // move the ball
     x += dx;
     y += dy;
@@ -95,4 +105,5 @@ function keyUpHandler(e) {
 
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
-setInterval(draw, 10);
+
+const interval = setInterval(draw, 10);
