@@ -3,36 +3,42 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-let score = 0;
 
 let TIMEOUT = 10;
 
 const BALL_RADIUS = 10;
 let BALL_COLOR = "#0095DD";
-let x = canvas.width / 2;
-let y = canvas.height - 30;
-
-let dx = 2;
-let dy = -2;
 
 const PADDLE_HEIGHT = 10;
 const PADDLE_WIDTH = 75;
-let paddleX = (canvas.width - PADDLE_WIDTH) / 2;
 
-let keyboardDirection = "";
-
-const brickRowCount = 3;
-const brickColumnCount = 5;
+const BRICK_ROW_COUNT = 3;
+const BRICK_COLUMN_COUNT = 5;
 const BRICK_WIDTH = 75;
 const BRICK_HEIGHT = 20;
 const BRICK_PADDING = 10;
 const BRICK_OFFSET_TOP = 30;
 const BRICK_OFFSET_LEFT = 30;
 
+let score = 0;
+let lives = 3;
+
+
+let x = canvas.width / 2;
+let y = canvas.height - 30;
+
+let dx = 2;
+let dy = -2;
+
+
+let paddleX = (canvas.width - PADDLE_WIDTH) / 2;
+
+let keyboardDirection = "";
+
 const bricks = [];
-for (let c = 0; c < brickColumnCount; c++) {
+for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
     bricks[c] = [];
-    for (let r = 0; r < brickRowCount; r++) {
+    for (let r = 0; r < BRICK_ROW_COUNT; r++) {
         bricks[c][r] = { x: 0, y: 0, isAvailable: true };
     }
 }
@@ -44,6 +50,11 @@ function getRandomColor() {
 function drawScore() {
     ctx.font = "16px Arial";
     ctx.fillText(`Score: ${score}`, 8, 20);
+}
+
+function drawLives() {
+    ctx.font = "16px Arial";
+    ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 
 function drawBall() {
@@ -66,8 +77,8 @@ function drawPaddle() {
 }
 
 function drawBricks() {
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
+    for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
+        for (let r = 0; r < BRICK_ROW_COUNT; r++) {
             const currentBrick = bricks[c][r];
             if (currentBrick.isAvailable) {
                 const brickX = c * (BRICK_WIDTH + BRICK_PADDING) + BRICK_OFFSET_LEFT;
@@ -84,8 +95,8 @@ function drawBricks() {
 }
 
 function collisionDetection() {
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
+    for (let c = 0; c < BRICK_COLUMN_COUNT; c++) {
+        for (let r = 0; r < BRICK_ROW_COUNT; r++) {
             const currentBrick = bricks[c][r];
             if (currentBrick.isAvailable) {
                 if (x > currentBrick.x && x < currentBrick.x + BRICK_WIDTH && y > currentBrick.y && y < currentBrick.y + BRICK_HEIGHT) {
@@ -100,10 +111,28 @@ function collisionDetection() {
 }
 
 function winDetection() {
-    if (score === brickRowCount * brickColumnCount) {
+    if (score === BRICK_ROW_COUNT * BRICK_COLUMN_COUNT) {
         alert("YOU WIN, CONGRATULATIONS! 🥳");
         document.location.reload();
         clearInterval(interval);
+    }
+}
+
+function failDetection() {
+    lives--;
+    if (!lives) {
+        alert("GAME OVER!😉");
+        document.location.reload();
+        clearInterval(interval);
+    } else {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 2;
+        dy = -2;
+        paddleX = (canvas.width - PADDLE_WIDTH) / 2;
+        clearInterval(interval);
+        TIMEOUT = 10;
+        interval = setInterval(draw, TIMEOUT);
     }
 }
 
@@ -111,6 +140,7 @@ function draw() {
     reset();
     winDetection();
     drawScore();
+    drawLives();
     collisionDetection();
     drawBall();
     drawPaddle();
@@ -130,13 +160,11 @@ function draw() {
         if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
             dy = -dy;
             clearInterval(interval);
-            TIMEOUT = Math.max(1, TIMEOUT - 0.2);
+            TIMEOUT = Math.max(1, TIMEOUT - 0.5);
             interval = setInterval(draw, TIMEOUT);
             // otherwise
         } else {
-            alert("GAME OVER!😉");
-            document.location.reload();
-            clearInterval(interval);
+            failDetection();
         }
     }
 
