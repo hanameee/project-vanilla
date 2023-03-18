@@ -16,7 +16,7 @@ let dx = 2;
 let dy = -2;
 
 const PADDLE_HEIGHT = 10;
-const PADDLE_WIDTH = 150;
+const PADDLE_WIDTH = 75;
 let paddleX = (canvas.width - PADDLE_WIDTH) / 2;
 
 let keyboardDirection = "";
@@ -176,7 +176,15 @@ function keyUpHandler(e) {
     }
 }
 
-document.addEventListener("keydown", keyDownHandler);
-document.addEventListener("keyup", keyUpHandler);
+function mouseMoveHandler(e) {
+    const relativeX = e.clientX - canvas.offsetLeft;
+    if (relativeX > PADDLE_WIDTH / 2 && relativeX < canvas.width - PADDLE_WIDTH / 2) {
+        paddleX = relativeX - PADDLE_WIDTH / 2;
+    }
+}
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 let interval = setInterval(draw, TIMEOUT);
