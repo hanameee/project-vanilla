@@ -114,25 +114,21 @@ function winDetection() {
     if (score === BRICK_ROW_COUNT * BRICK_COLUMN_COUNT) {
         alert("YOU WIN, CONGRATULATIONS! 🥳");
         document.location.reload();
-        clearInterval(interval);
     }
 }
 
 function failDetection() {
     lives--;
     if (!lives) {
-        alert("GAME OVER!😉");
+        alert("GAME OVER! 😦");
         document.location.reload();
-        clearInterval(interval);
+
     } else {
         x = canvas.width / 2;
         y = canvas.height - 30;
         dx = 2;
         dy = -2;
         paddleX = (canvas.width - PADDLE_WIDTH) / 2;
-        clearInterval(interval);
-        TIMEOUT = 10;
-        interval = setInterval(draw, TIMEOUT);
     }
 }
 
@@ -158,13 +154,14 @@ function draw() {
     } else if (newY > canvas.height - BALL_RADIUS) {
         // ball hit the paddle
         if (x > paddleX && x < paddleX + PADDLE_WIDTH) {
+            dx += 0.2;
+            dy += 0.2;
             dy = -dy;
-            clearInterval(interval);
-            TIMEOUT = Math.max(1, TIMEOUT - 0.5);
-            interval = setInterval(draw, TIMEOUT);
             // otherwise
         } else {
             failDetection();
+            dx = 2;
+            dy = 2;
         }
     }
 
@@ -179,6 +176,8 @@ function draw() {
     if (keyboardDirection === "left") {
         paddleX = Math.max(paddleX - 7, 0);
     }
+    requestAnimationFrame(draw);
+
 }
 
 
@@ -215,4 +214,4 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
-let interval = setInterval(draw, TIMEOUT);
+draw();
